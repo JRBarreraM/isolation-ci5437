@@ -4,15 +4,17 @@
 
 state::state(const state &s) {
     n = s.n;
+    h = s.h;
     p_pos = s.p_pos;
     e_pos = s.e_pos;
+    turn = s.turn;
     board = unique_ptr<bool[]>(new bool[s.n*s.n]);
     for(int i=0; i<s.n*s.n; i++){
         board[i] = s.board[i];
     }
 }
 
-state::state(int pn) : n(pn), board(new bool[pn*pn]){
+state::state(int n, int h) : n(n), h(h), board(new bool[n*n]){
     for(int i = 0; i < n*n; i++){
         board[i] = false;
     }
@@ -63,7 +65,54 @@ inline state state::apply_move(int move, bool player){
         result.p_pos = move;
     else
         result.e_pos = move;
+    result.turn++;
     return result;
+}
+
+inline bool state::terminal(bool player) {
+    return valid_moves(player).size() == 0;
+}
+
+inline int state::defensiveToOffensive() {
+    float ratio = (float)turn / (float)(n * n);
+    return ratio <= 0.5 ? defensive() : offensive();
+}
+
+inline int state::offensiveToDefensive() {
+    float ratio = (float)turn / (float)(n * n);
+    return ratio > 0.5 ? defensive() : offensive();
+}
+
+inline int state::offensive() {
+    int playerMoves = valid_moves(true).size();
+    int enemyMoves = valid_moves(false).size();
+    return playerMoves  - (enemyMoves * 2);
+}
+
+inline int state::defensive() {
+    int playerMoves = valid_moves(true).size();
+    int enemyMoves = valid_moves(false).size();
+    return playerMoves *2  - enemyMoves;
+}
+
+inline int state::value() {
+    switch(h){
+        case 1:
+            return offensive();
+            break;
+        case 2:
+            return defensive();
+            break;
+        case 3:
+            return defensiveToOffensive();
+            break;
+        case 4:
+            return offensiveToDefensive();
+            break;
+        default:
+            return 0;
+            break;
+    }
 }
 
 void state::printarray(bool player){
@@ -91,4 +140,5 @@ void state::printarray(bool player){
         }
         cout << endl;
     }
+    cout << endl;
 }
