@@ -35,18 +35,22 @@ Para representar cada estado del juego se utilizo:
 - Un arreglo `board` de tamaño NxN de booleanos que indica si una casilla esta ocupada o no
 - Dos entero `p_pos` y `e_pos` que indican la posicion del jugador y el oponente en dicho turno
 - Un entero `turn` que indica el numero del turno
-- Un entero `h` que especifica la euristica a utlizar en ese turno
+- Un entero `h` que especifica la heuristica a utlizar en ese turno
 
 ## Heuristicas
-Las heuristicas implementadas son bastante sencilas, estas se basan en la cantidad de moviemientos disponibles que tendran el jugado y el oponente despues de realizar el movimiento.
+Las heuristicas implementadas son bastante sencillas, estas se basan en la cantidad de movimientos disponibles que tendran el jugador y el oponente despues de realizar el movimiento.
 
 ### Offensive
 La ofensiva le otorga mayor importancia a que el jugador tenga una menor cantidad de casillas disponibles.
+```
 playerMoves - (enemyMoves * 2)
+```
 
 ### Defensive
 La defensiva le otorga mayor importancia a que el oponente tenga una mayor cantidad de casillas disponibles.
+```
 (playerMoves * 2) - enemyMoves
+```
 
 ### Defensive to Offensive
 Esta heuristica utiliza la heuristica defensiva durante la primera mitad de la partida y luego comienza aplicar la heuristica defensiva
